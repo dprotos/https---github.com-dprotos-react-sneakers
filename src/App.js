@@ -1,43 +1,32 @@
+import React from "react";
 import Card from "./components/Card";
 import Header from "./components/Header";
 import Drawer from "./components/Drawer";
 
-const arr = [
-  {
-    title: "Мужские Кроссовки Nike Blazer Mid Suede",
-    price: 13000,
-    imageUrl: "/img/sneakers/1.jpg",
-    key:1,
-  },
-  {
-    title: "Мужские Кроссовки Nike Air Max 270",
-    price: 14000,
-    imageUrl: "/img/sneakers/2.jpg",
-    key:2,
-  },
-  {
-    title: "Мужские Кроссовки Nike Blazer Mid Suede",
-    price: 13000,
-    imageUrl: "/img/sneakers/3.jpg",
-    key:3,
-  },
-  {
-    title: "Кроссовки Puma X Aka Boku Future Rider",
-    price: 9000,
-    imageUrl: "/img/sneakers/4.jpg",
-    key:4,
-  },
-];
-
 function App() {
-  const cardIsOpen = "none";
+  const [items, setItems] = React.useState([]);
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const [cartItems, setCartItems] = React.useState([]);
+
+  React.useEffect(() => {
+    fetch("https://65b2d15f9bfb12f6eafe76e1.mockapi.io/items")
+      .then((res) => res.json())
+      .then((data) => setItems(data));
+  }, []);
+
+  const changeCart = (obj, isAdded) => {
+    if (isAdded) {
+      setCartItems((prev) => [...prev, obj]);
+    } else {
+      setCartItems((prev) => prev.filter((item) => item.item_id!== obj.item_id));
+    }
+  }
+
+
   return (
     <div className="wrapper clear">
-      <div style={{ display: cardIsOpen }} className="overlay">
-        <Drawer />
-      </div>
-
-      <Header />
+      {drawerOpen && <Drawer handleClose={() => setDrawerOpen(false)} cartItems={cartItems} changeCart={changeCart}/>}
+      <Header handleOpenDrawer={() => setDrawerOpen(true)} cartTotalSum={cartItems.reduce((sum, current)=>(sum + Number(current.price)),0)} />
 
       <div className="content p-40">
         <div className="d-flex align-center justify-between mb-40">
@@ -48,9 +37,18 @@ function App() {
           </div>
         </div>
 
-        <div className="items d-flex">
-          {arr.map((obj) => (
-            <Card title={obj.title} price={obj.price} imageUrl={obj.imageUrl} key={obj.key} onClick={() => alert(obj.title)} />
+        <div className="items d-flex flex-wrap">
+          {items.map((item) => (
+            <Card
+              title={item.title}
+              price={item.price}
+              imageUrl={item.imageUrl}
+              item_id={item.key}
+              key = {item.key}
+              changeCart={changeCart}
+              cartItems={cartItems}
+              addToFavorite={() => alert(item.key)}
+            />
           ))}
         </div>
       </div>

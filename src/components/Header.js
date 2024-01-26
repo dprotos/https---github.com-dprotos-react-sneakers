@@ -1,4 +1,4 @@
-function Header() {
+function Header({handleOpenDrawer, cartTotalSum=0}) {
   return (
     <header className="d-flex justify-between align-center p-40">
       <div className="d-flex alig-center">
@@ -9,9 +9,9 @@ function Header() {
         </div>
       </div>
       <ul className="d-flex">
-        <li className="mr-30 align-center">
-          <img src="/img/cart.svg" alt="Logo" width={18} height={18} />
-          <span className="align-center">25 998 руб.</span>
+        <li className="mr-30 align-center cu-p" onClick={handleOpenDrawer}>
+          <img  src="/img/cart.svg" alt="Logo" width={18} height={18} />
+          <span className="align-center">{cartTotalSum} руб.</span>
         </li>
         <li>
           <img src="/img/user.svg" alt="Logo" width={18} height={18} />
