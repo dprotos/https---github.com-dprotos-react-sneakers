@@ -1,23 +1,46 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "./Card.module.scss";
 
-function Card({item_id, title, price, imageUrl, addToFavorite, changeCart, cartItems}){
-  
+function Card({
+  item_id,
+  title,
+  price,
+  cartItems,
+  imageUrl,
+  addFavorite,
+  removeFavorite,
+  addCartItem,
+  removeCartItem,
+  favorites
+}) {
   const [isAdded, setIsAdded] = React.useState(false);
-
+  const [isFavorite, setIsFavorite] = React.useState(false);
   const onClickAdd = () => {
-     changeCart({item_id, title, price, imageUrl}, !isAdded);
+    isAdded
+      ? removeCartItem(cartItems.find((obj) => obj.item_id === item_id)?.id)
+      : addCartItem({ item_id, title, price, imageUrl });
   };
 
-  React.useEffect(() => {
-    setIsAdded(Boolean(cartItems.find((item)=> item.item_id === item_id)));
-  }
-  ,[cartItems, item_id])
+  const onClickFavorite = () => {
+    isFavorite ?
+    removeFavorite(favorites.find((obj) => obj.item_id === item_id)?.id)
+    :
+    addFavorite({item_id, title, price, imageUrl});
+    
+  };
+
+  useEffect(() => {
+    setIsAdded(Boolean(cartItems.find((obj) => obj.item_id === item_id)));
+    setIsFavorite(Boolean(favorites.find((obj) => obj.item_id === item_id)));
+  }, [cartItems, favorites, item_id]);
 
   return (
     <div className={styles.card}>
-      <div className={styles.favorite} onClick={addToFavorite}>
-        <img src="/img/heart-unliked.svg" alt="Unliked" />
+      <div className={styles.favorite} onClick={onClickFavorite}>
+        <img
+          src={isFavorite ? "/img/heart-liked.svg" : "/img/heart-unliked.svg"}
+          alt="favorite"
+        />
       </div>
       <img src={imageUrl} alt="" width={133} height={112} />
       <h5>{title}</h5>

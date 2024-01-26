@@ -1,20 +1,45 @@
-function Header({handleOpenDrawer, cartTotalSum=0}) {
+import { Link } from "react-router-dom";
+function Header({ handleOpenDrawer, cartTotalSum = 0 }) {
   return (
     <header className="d-flex justify-between align-center p-40">
-      <div className="d-flex alig-center">
-        <img src="/img/logo.png" alt="Logo" width={40} height={40} />
-        <div>
-          <h3 className="text-uppercase">REACT SNEAKERS</h3>
-          <p className="opacity-5">Магазин кроссовок</p>
+      <Link to="/">
+        <div className="d-flex alig-center">
+          <img src="/img/logo.png" alt="Logo" width={40} height={40} />
+          <div>
+            <h3 className="text-uppercase">REACT SNEAKERS</h3>
+            <p className="opacity-5">Магазин кроссовок</p>
+          </div>
         </div>
-      </div>
+      </Link>
       <ul className="d-flex">
-        <li className="mr-30 align-center cu-p" onClick={handleOpenDrawer}>
-          <img  src="/img/cart.svg" alt="Logo" width={18} height={18} />
-          <span className="align-center">{cartTotalSum} руб.</span>
+        <li
+          className="d-flex mr-30 align-center cu-p"
+          onClick={handleOpenDrawer}
+        >
+          <img src="/img/cart.svg" alt="cart" width={18} height={18} />
+          <div>
+            <span>{cartTotalSum} руб.</span>
+          </div>
         </li>
         <li>
-          <img src="/img/user.svg" alt="Logo" width={18} height={18} />
+          <Link to="/favorites">
+            <img
+              className="mr-20 cu-p"
+              src="/img/favorites.svg"
+              alt="favorites"
+              width={18}
+              height={18}
+            />
+          </Link>
+        </li>
+        <li>
+          <img
+            className="mr-20 cu-p"
+            src="/img/user.svg"
+            alt="user"
+            width={18}
+            height={18}
+          />
         </li>
       </ul>
     </header>

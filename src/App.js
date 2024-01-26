@@ -1,57 +1,103 @@
 import React from "react";
-import Card from "./components/Card";
+import { Route } from "react-router-dom";
+import axios from "axios";
+import Home from "./pages/Home";
 import Header from "./components/Header";
 import Drawer from "./components/Drawer";
 
 function App() {
   const [items, setItems] = React.useState([]);
   const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const [searchString, setSearchString] = React.useState("");
   const [cartItems, setCartItems] = React.useState([]);
+  const [favorites, setFavorites] = React.useState([]);
 
   React.useEffect(() => {
-    fetch("https://65b2d15f9bfb12f6eafe76e1.mockapi.io/items")
-      .then((res) => res.json())
-      .then((data) => setItems(data));
+    axios.get("http://localhost:4000/items").then((res) => setItems(res.data));
+    axios
+      .get("http://localhost:4000/cart")
+      .then((res) => setCartItems(res.data));
+    axios
+      .get("http://localhost:4000/favorites")
+      .then((res) => setFavorites(res.data));
   }, []);
 
-  const changeCart = (obj, isAdded) => {
-    if (isAdded) {
-      setCartItems((prev) => [...prev, obj]);
-    } else {
-      setCartItems((prev) => prev.filter((item) => item.item_id!== obj.item_id));
-    }
-  }
+  const addCartItem = (obj) => {
+    axios
+      .post("http://localhost:4000/cart", obj)
+      .then((res) => {
+        setCartItems((prev) => [...prev, res.data]);
+      })
+      .catch((err) => alert(err));
+  };
 
+  const removeCartItem = (id) => {
+    axios
+      .delete(`http://localhost:4000/cart/${id}`)
+      .then(() => {
+        setCartItems((prev) => prev.filter((item) => item.id !== id));
+      })
+      .catch((err) => alert(err));
+  };
+
+  const removeFavorite = (id) => {
+    axios
+      .delete(`http://localhost:4000/favorites/${id}`)
+      .then(() => {
+        setFavorites((prev) => prev.filter((item) => item.id !== id));
+      })
+      .catch((err) => alert(err));
+  };
+
+  const addFavorite = (obj) => {
+    axios
+      .post("http://localhost:4000/favorites", obj)
+      .then((res) => {
+        setFavorites((prev) => [...prev, res.data]);
+      })
+      .catch((err) => alert(err));
+  };
+
+  const searchItems = (event) => {
+    setSearchString(event.target.value);
+  };
+
+  const clearSearch = () => {
+    setSearchString("");
+  };
 
   return (
     <div className="wrapper clear">
-      {drawerOpen && <Drawer handleClose={() => setDrawerOpen(false)} cartItems={cartItems} changeCart={changeCart}/>}
-      <Header handleOpenDrawer={() => setDrawerOpen(true)} cartTotalSum={cartItems.reduce((sum, current)=>(sum + Number(current.price)),0)} />
+      {drawerOpen && (
+        <Drawer
+          handleClose={() => setDrawerOpen(false)}
+          cartItems={cartItems}
+          addCartItem={addCartItem}
+          removeCartItem={removeCartItem}
+        />
+      )}
 
-      <div className="content p-40">
-        <div className="d-flex align-center justify-between mb-40">
-          <h1>Все товары</h1>
-          <div className="search-block d-flex">
-            <img src="/img/search.svg" alt="Search" />
-            <input placeholder="Поиск..." />
-          </div>
-        </div>
-
-        <div className="items d-flex flex-wrap">
-          {items.map((item) => (
-            <Card
-              title={item.title}
-              price={item.price}
-              imageUrl={item.imageUrl}
-              item_id={item.key}
-              key = {item.key}
-              changeCart={changeCart}
-              cartItems={cartItems}
-              addToFavorite={() => alert(item.key)}
-            />
-          ))}
-        </div>
-      </div>
+      <Header
+        handleOpenDrawer={() => setDrawerOpen(true)}
+        cartTotalSum={cartItems.reduce(
+          (sum, current) => sum + Number(current.price),
+          0
+        )}
+      />
+      <Route exact path="/">
+        <Home
+          items={items}
+          searchString={searchString}
+          searchItems={searchItems}
+          clearSearch={clearSearch}
+          favorites={favorites}
+          cartItems={cartItems}
+          addCartItem={addCartItem}
+          removeCartItem={removeCartItem}
+          addFavorite={addFavorite}
+          removeFavorite={removeFavorite}
+        />
+      </Route>
     </div>
   );
 }
