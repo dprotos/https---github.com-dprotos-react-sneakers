@@ -85,72 +85,29 @@
       "id": "46cc"
     }
   ],
-  "cart": [
+  "cart": [],
+  "favorites": [],
+  "orders": [
     {
-      "id": "2343",
-      "item_id": 6,
-      "title": "Мужские Кроссовки Nike Kyrie 7",
-      "price": 11300,
-      "imageUrl": "/img/sneakers/6.jpg"
-    },
-    {
-      "id": "7104",
-      "item_id": 12,
-      "title": "Мужские Кроссовки Nike Kyrie Flytrap IV",
-      "price": 11300,
-      "imageUrl": "/img/sneakers/12.jpg"
-    },
-    {
-      "id": "1f8e",
-      "item_id": 11,
-      "title": "Кроссовки Puma X Aka Boku Future Rider",
-      "price": 9000,
-      "imageUrl": "/img/sneakers/11.jpg"
-    },
-    {
-      "id": "384c",
-      "item_id": 3,
-      "title": "Мужские Кроссовки Nike Blazer Mid Suede",
-      "price": 13000,
-      "imageUrl": "/img/sneakers/3.jpg"
+      "id": "6618",
+      "items": [
+        {
+          "id": "454b",
+          "item_id": 4,
+          "title": "Кроссовки Puma X Aka Boku Future Rider",
+          "price": 9000,
+          "imageUrl": "/img/sneakers/4.jpg"
+        },
+        {
+          "id": "6395",
+          "item_id": 3,
+          "title": "Мужские Кроссовки Nike Blazer Mid Suede",
+          "price": 13000,
+          "imageUrl": "/img/sneakers/3.jpg"
+        }
+      ],
+      "total": 22000,
+      "tax": 1100
     }
-  ],
-  "favorites": [
-    {
-      "id": "3d73",
-      "item_id": 1,
-      "title": "Мужские Кроссовки Nike Blazer Mid Suede",
-      "price": 13000,
-      "imageUrl": "/img/sneakers/1.jpg"
-    },
-    {
-      "id": "6f88",
-      "item_id": 3,
-      "title": "Мужские Кроссовки Nike Blazer Mid Suede",
-      "price": 13000,
-      "imageUrl": "/img/sneakers/3.jpg"
-    },
-    {
-      "id": "7aa3",
-      "item_id": 4,
-      "title": "Кроссовки Puma X Aka Boku Future Rider",
-      "price": 9000,
-      "imageUrl": "/img/sneakers/4.jpg"
-    },
-    {
-      "id": "6c28",
-      "item_id": 11,
-      "title": "Кроссовки Puma X Aka Boku Future Rider",
-      "price": 9000,
-      "imageUrl": "/img/sneakers/11.jpg"
-    },
-    {
-      "id": "4f7d",
-      "item_id": 8,
-      "title": "Мужские Кроссовки Nike LeBron XVIII",
-      "price": 16500,
-      "imageUrl": "/img/sneakers/8.jpg"
-    }
-  ],
-  "orders": []
+  ]
 }

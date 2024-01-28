@@ -1,6 +1,41 @@
 import Card from "../components/Card";
 
-function Home({items, searchString, searchItems, favorites, cartItems, removeFavorite, addFavorite, addCartItem, removeCartItem, clearSearch}){ 
+function Home({
+  items,
+  cart,
+  favorites,
+  searchString,
+  searchItems,
+  isLoading,
+  handleClickFavorite,
+  handleClickCart,
+  clearSearch,
+}) {
+  
+  function renderItems(){
+    if (isLoading) {
+      const fakeItems = [...Array(12)];
+      return fakeItems.map((item, index) => (
+        <Card key={index} isLoading={isLoading} />
+      ));
+    } else {
+      return items
+        .filter((item) =>
+          item.title.toLowerCase().includes(searchString.toLowerCase())
+        )
+        .map((item) => (
+          <Card
+            item_id={item.key}
+            handleClickCart={handleClickCart}
+            handleClickFavorite={handleClickFavorite}
+            isLoading={isLoading}
+            isFavorite={favorites.some((obj) => obj.item_id === item.key)}
+            {...item}
+          />
+        ));
+    }
+  };
+
   return (
     <div className="content p-40">
       <div className="d-flex align-center justify-between mb-40">
@@ -22,28 +57,7 @@ function Home({items, searchString, searchItems, favorites, cartItems, removeFav
           )}
         </div>
       </div>
-
-      <div className="items d-flex flex-wrap">
-        {items
-          .filter((item) =>
-            item.title.toLowerCase().includes(searchString.toLowerCase())
-          )
-          .map((item) => (
-            <Card
-              key={item.key}
-              item_id={item.key}
-              title={item.title}
-              price={item.price}
-              imageUrl={item.imageUrl}
-              addCartItem={addCartItem}
-              removeCartItem={removeCartItem}
-              cartItems={cartItems}
-              addFavorite={addFavorite}
-              removeFavorite={removeFavorite}
-              favorites={favorites}
-            />
-          ))}
-      </div>
+      <div className="items d-flex flex-wrap">{renderItems()}</div>
     </div>
   );
 }

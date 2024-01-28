@@ -1,0 +1,31 @@
+.cartItem{
+  border: 1px solid #f3f3f3;
+  border-radius: 20px;
+  padding: 10px 20px;
+  margin-bottom: 20px;
+  .cartItemImg{
+    width: 80px;
+    height: 80px;
+    background-size: contain;
+    background-position: 0 10px;
+    background-repeat: no-repeat;
+    margin-right: 20px;
+  }
+  p{
+    font-size: 14px;
+    margin: 0;
+    margin-bottom: 8px;
+  }
+  b{
+    font-size: 14px;
+  }
+}
+
+.removeBtn{
+  opacity: 0.5;
+  cursor: pointer;
+  transition: opacity 0.15s ease-in-out;
+  &:hover{
+    opacity: 1;
+  }
+}

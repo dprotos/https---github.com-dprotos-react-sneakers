@@ -33,13 +33,15 @@ function Header({ handleOpenDrawer, cartTotalSum = 0 }) {
           </Link>
         </li>
         <li>
-          <img
-            className="mr-20 cu-p"
-            src="/img/user.svg"
-            alt="user"
-            width={18}
-            height={18}
-          />
+          <Link to="/orders">
+            <img
+              className="mr-20 cu-p"
+              src="/img/user.svg"
+              alt="user"
+              width={18}
+              height={18}
+            />
+          </Link>
         </li>
       </ul>
     </header>

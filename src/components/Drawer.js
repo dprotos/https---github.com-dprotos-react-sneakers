@@ -1,18 +1,49 @@
-import React from "react";
+import React, { useContext, useState } from "react";
+import CartItem from "./CartItem";
+import CartInfo from "./CartInfo";
+import AppContext from "../context";
+import axios from "axios";
 
-function Drawer({ cartItems = [], handleClose, removeCartItem }) {
-  const totalCartSum = cartItems.reduce(
+function Drawer({ handleClose, handleClickCart }) {
+  const { cart, setCart } = useContext(AppContext);
+  const [orderId, setOrderId] = useState("");
+  const [orderProcessing, setOrderProcessing] = useState(false);
+  const totalCartSum = cart.reduce(
     (sum, current) => sum + Number(current.price),
     0
   );
+
   const [cartIsEmpty, setCartIsEmpty] = React.useState(true);
+  const [orderCreated, setOrderCreated] = React.useState(false);
 
+  const createOrder = async () => {
+    setOrderProcessing(true);
+    try {
+      const { data } = await axios.post("http://localhost:4000/orders", {
+        items: cart,
+        total: totalCartSum,
+        tax: totalCartSum * 0.05
+      });
+      await cart.map((obj) =>
+        axios.delete(`http://localhost:4000/cart/${obj.id}`)
+      );
+      setTimeout(() => {
+        setOrderId(data.id);
+        setOrderCreated(true);
+        setCart([]);
+        setOrderProcessing(false);
+      }, 2000);
+    } catch (err) {
+      console.log(err);
+      setOrderProcessing(false);
+    }
 
-
+    
+  };
 
   React.useEffect(() => {
-    setCartIsEmpty(cartItems.length === 0);
-  }, [cartItems]);
+    setCartIsEmpty(cart.length === 0);
+  }, [cart]);
 
   return (
     <div className="overlay">
@@ -28,44 +59,33 @@ function Drawer({ cartItems = [], handleClose, removeCartItem }) {
             />
           </h2>
         )}
-        {cartIsEmpty && (
-          <div className="cartEmpty d-flex align-center justify-center flex-column flex">
-            <img
-              className="mb-20"
-              width="120px"
-              height="120px"
-              src="img/empty-cart.jpg"
-              alt="Empty"
-            />
-            <h2>Корзина пустая</h2>
-            <p className="opacity-6">
-              Добавьте хотя бы один товар, чтобы сделать заказ
-            </p>
-            <button onClick={handleClose} className="greenButton">
-              <img className="mr-20" src="/img/arrow-left.svg" alt="arrow" />
-              Вернуться назад
-            </button>
-          </div>
+        {orderCreated && (
+          <CartInfo
+            title="Заказ оформлен!"
+            description={`Ваш заказ #${orderId} принят в работу`}
+            imageUrl="img/complete-order.jpg"
+            handleClose={() => {
+              handleClose();
+              setOrderCreated(false);
+            }}
+          />
+        )}
+        {!orderCreated && cartIsEmpty && (
+          <CartInfo
+            title="Корзина пуста"
+            description="Добавьте хотя бы один товар, чтобы сделать заказ"
+            imageUrl="img/empty-cart.jpg"
+            handleClose={handleClose}
+          />
         )}
         {!cartIsEmpty && (
           <div className="cartItems">
-            {cartItems.map((obj) => (
-              <div className="cartItem d-flex align-center">
-                <div
-                  className="cartItemImg"
-                  style={{ backgroundImage: `url(${obj.imageUrl})` }}
-                ></div>
-                <div className="mr-20">
-                  <p>{obj.title}</p>
-                  <b>{obj.price} руб.</b>
-                </div>
-                <img
-                  className="removeBtn"
-                  onClick={() => removeCartItem(obj.id)}
-                  src="img/btn-delete.svg"
-                  alt="Delete"
-                />
-              </div>
+            {cart.map((item) => (
+              <CartItem
+                key={item.id}
+                handleClickCart={handleClickCart}
+                {...item}
+              />
             ))}
           </div>
         )}
@@ -83,7 +103,11 @@ function Drawer({ cartItems = [], handleClose, removeCartItem }) {
                 <b>{totalCartSum * 0.05} руб.</b>
               </li>
             </ul>
-            <button className="greenButton">
+            <button
+              disabled={orderProcessing}
+              onClick={createOrder}
+              className="greenButton"
+            >
               Оформить заказ <img src="/img/arrow-right.svg" alt="" />
             </button>
           </div>
