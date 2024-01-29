@@ -1,8 +1,19 @@
-import Favorite from "../components/Favorite";
+import { useEffect, useState } from "react";
+import Order from "../components/Order";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
-function Orders({ items = []}) {
-  const isEmpty = items.length === 0;
+function Orders() {
+  const [orders, setOrders] = useState([]);
+  useEffect(() => {
+    ( async () => {
+      const { data } = await axios.get("http://localhost:4000/orders?_sort=-date");
+      setOrders(data);
+    })();
+  }, []);
+
+  const isEmpty = orders.length === 0;
+
   return (
     <div className="content p-40">
       <div className="d-flex align-center justify-between mb-40">
@@ -28,14 +39,11 @@ function Orders({ items = []}) {
         </div>
       )}
       {!isEmpty && (
-        <div className="items d-flex flex-wrap">
-          {items.map((item) => (
-            <Favorite
-              key={item.id}
-              id={item.id}
-              title={item.title}
-              price={item.price}
-              imageUrl={item.imageUrl}
+        <div className="ordersList d-flex flex-wrap">
+          {orders.map((order) => (
+            <Order
+              key={order.id}
+              {...order}
             />
           ))}
         </div>

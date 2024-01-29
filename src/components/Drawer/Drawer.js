@@ -1,20 +1,19 @@
-import React, { useContext, useState } from "react";
-import CartItem from "./CartItem";
-import CartInfo from "./CartInfo";
-import AppContext from "../context";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
-function Drawer({ handleClose, handleClickCart }) {
-  const { cart, setCart } = useContext(AppContext);
+import { useCart } from "../../hooks/useCart";
+import CartItem from "../CartItem";
+import CartInfo from "../CartInfo";
+
+import styles from "./Drawer.module.scss";
+
+function Drawer({ handleClose, handleClickCart, drawerOpen }) {
+  const { cart, setCart, totalCartSum } = useCart();
   const [orderId, setOrderId] = useState("");
   const [orderProcessing, setOrderProcessing] = useState(false);
-  const totalCartSum = cart.reduce(
-    (sum, current) => sum + Number(current.price),
-    0
-  );
-
-  const [cartIsEmpty, setCartIsEmpty] = React.useState(true);
-  const [orderCreated, setOrderCreated] = React.useState(false);
+  
+  const [cartIsEmpty, setCartIsEmpty] = useState(true);
+  const [orderCreated, setOrderCreated] = useState(false);
 
   const createOrder = async () => {
     setOrderProcessing(true);
@@ -22,7 +21,8 @@ function Drawer({ handleClose, handleClickCart }) {
       const { data } = await axios.post("http://localhost:4000/orders", {
         items: cart,
         total: totalCartSum,
-        tax: totalCartSum * 0.05
+        tax: totalCartSum * 0.05,
+        date: new Date()
       });
       await cart.map((obj) =>
         axios.delete(`http://localhost:4000/cart/${obj.id}`)
@@ -41,13 +41,13 @@ function Drawer({ handleClose, handleClickCart }) {
     
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     setCartIsEmpty(cart.length === 0);
   }, [cart]);
 
   return (
-    <div className="overlay">
-      <div className="drawer">
+    <div className={`${styles.overlay} ${drawerOpen&&styles.overlayOpen}`}>
+      <div className={`${styles.drawer}`}>
         {!cartIsEmpty && (
           <h2 className="mb-30 d-flex justify-between">
             Корзина
@@ -108,7 +108,7 @@ function Drawer({ handleClose, handleClickCart }) {
               onClick={createOrder}
               className="greenButton"
             >
-              Оформить заказ <img src="/img/arrow-right.svg" alt="" />
+             {orderProcessing ? "Идёт оформление заказа" : "Оформить заказ"}<img src="/img/arrow-right.svg" alt="" />
             </button>
           </div>
         )}

@@ -9,9 +9,7 @@ import Orders from "./pages/Orders";
 import Favorites from "./pages/Favorites";
 
 import Header from "./components/Header";
-import Drawer from "./components/Drawer";
-
-
+import Drawer from "./components/Drawer/Drawer";
 
 function App() {
   const [items, setItems] = React.useState([]);
@@ -23,11 +21,13 @@ function App() {
   const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {
-    try {
-      async function fetchData() {
-        const resCart = await axios.get("http://localhost:4000/cart");
-        const resFavorites = await axios.get("http://localhost:4000/favorites");
-        const resItems = await axios.get("http://localhost:4000/items");
+    async function fetchData() {
+      try {
+        const [resCart, resFavorites, resItems] = await Promise.all([
+          axios.get("http://localhost:4000/cart"),
+          axios.get("http://localhost:4000/favorites"),
+          axios.get("http://localhost:4000/items"),
+        ]);
 
         setTimeout(() => {
           //эмуляция задержки бэка
@@ -35,12 +35,13 @@ function App() {
           setCart(resCart.data);
           setFavorites(resFavorites.data);
           setItems(resItems.data);
-        }, 800);
+        }, 1200);
+      } catch (err) {
+        alert("Ошибка получения данных!");
+        console.log(err);
       }
-      fetchData();
-    } catch (err) {
-      console.log(err);
     }
+    fetchData();
   }, []);
 
   const handleClickCart = (obj) => {
@@ -51,9 +52,7 @@ function App() {
       axios
         .delete(`http://localhost:4000/cart/${cartElement.id}`)
         .then(() => {
-          setCart((prev) =>
-            prev.filter((item) => item.id !== cartElement.id)
-          );
+          setCart((prev) => prev.filter((item) => item.id !== cartElement.id));
         })
         .catch((err) => alert(err));
     } else {
@@ -67,10 +66,8 @@ function App() {
   };
 
   const isCartContainItem = (id) => {
-    return(
-      cart.some((obj)=>obj.item_id===id)
-    )
-  }
+    return cart.some((obj) => obj.item_id === id);
+  };
 
   const handleClickFavorite = (obj) => {
     const favElement = favorites.find((fav) => fav.item_id === obj.item_id);
@@ -102,15 +99,15 @@ function App() {
   };
 
   return (
-    <AppContext.Provider value={{items, cart, favorites, isCartContainItem, setCart}}>
+    <AppContext.Provider
+      value={{ items, cart, setCart, isCartContainItem, favorites }}
+    >
       <div className="wrapper clear">
-        {drawerOpen && (
-          <Drawer
-            handleClose={() => setDrawerOpen(false)}
-            cartItems={cart}
-            handleClickCart={handleClickCart}
-          />
-        )}
+        <Drawer
+          handleClose={() => setDrawerOpen(false)}
+          handleClickCart={handleClickCart}
+          drawerOpen={drawerOpen}
+        />
         <Header
           handleOpenDrawer={() => setDrawerOpen(true)}
           cartTotalSum={cart.reduce(
@@ -132,9 +129,7 @@ function App() {
           />
         </Route>
         <Route exact path="/favorites">
-          <Favorites            
-            handleClickFavorite={handleClickFavorite}
-          />
+          <Favorites handleClickFavorite={handleClickFavorite} />
         </Route>
         <Route exact path="/orders">
           <Orders items={favorites} />

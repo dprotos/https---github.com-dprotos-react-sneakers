@@ -1,5 +1,9 @@
 import { Link } from "react-router-dom";
-function Header({ handleOpenDrawer, cartTotalSum = 0 }) {
+import { useCart } from "../hooks/useCart";
+
+function Header({ handleOpenDrawer}) {
+  const {totalCartSum} = useCart();
+
   return (
     <header className="d-flex justify-between align-center p-40">
       <Link to="/">
@@ -18,7 +22,7 @@ function Header({ handleOpenDrawer, cartTotalSum = 0 }) {
         >
           <img src="/img/cart.svg" alt="cart" width={18} height={18} />
           <div>
-            <span>{cartTotalSum} руб.</span>
+            <span>{totalCartSum} руб.</span>
           </div>
         </li>
         <li>
